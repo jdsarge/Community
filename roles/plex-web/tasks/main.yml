@@ -1,0 +1,54 @@
+#########################################################################
+# Title:            Community: plex-web                            #
+# Author(s):        jdsarge                                             #
+# URL:              https://github.com/Cloudbox/Community               #
+# Docker Image(s):  tronyx/plex-web                           #
+# --                                                                    #
+#         Part of the Cloudbox project: https://cloudbox.works          #
+#########################################################################
+#                   GNU General Public License v3.0                     #
+#########################################################################
+---
+
+
+
+- name: "Setting CloudFlare DNS Record"
+  include_role:
+    name: cloudflare-dns
+  vars:
+    record: plex-web
+  when: cloudflare_enabled
+
+- name: Stop and remove any existing container
+  docker_container:
+    name: plex-web
+    state: absent
+
+
+- name: Create and start container
+  docker_container:
+    name: plex-web
+    image: tronyx/plex-web
+    pull: yes
+    published_ports:
+      - "5000:5000"
+
+    env:
+      TZ: "{{ tz }}"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+      VIRTUAL_HOST: "plex-web.{{ user.domain }}"
+      VIRTUAL_PORT: "8080"
+      LETSENCRYPT_HOST: "plex-web.{{ user.domain }}"
+      LETSENCRYPT_EMAIL: "{{ user.email }}"
+      UMASK_SET: "002"
+    volumes: "{{ default_volumes + torrents_downloads_path|default([]) }}"
+    labels:
+      "com.github.cloudbox.cloudbox_managed": "true"
+    networks:
+      - name: cloudbox
+        aliases:
+          - plex-web
+    purge_networks: yes
+    restart_policy: unless-stopped
+    state: started

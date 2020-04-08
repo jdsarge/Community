@@ -65,6 +65,7 @@
     - { role: ouroboros, tags: ['ouroboros'] }
     - { role: jdownloader2, tags: ['jdownloader2'] }
     - { role: plex2, tags: ['plex2'] }
+    - { role: plex-web, tags: ['plex-web'] }
     - { role: pyload, tags: ['pyload'] }
     - { role: qbittorrent, tags: ['qbittorrent'] }
     - { role: quassel, tags: ['quassel'] }
