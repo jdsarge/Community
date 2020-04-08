@@ -33,7 +33,6 @@
   file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
   with_items:
     - /opt/plex-web
-
     env:
       TZ: "{{ tz }}"
       PUID: "{{ uid }}"
