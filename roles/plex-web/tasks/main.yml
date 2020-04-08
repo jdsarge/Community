@@ -28,22 +28,18 @@
     pull: yes
     published_ports:
       - "5000:5000"
-
-- name: "Create plex-web directories"
-  file: "path={{ item }} state=directory mode=0775 owner={{ user.name }} group={{ user.name }}"
-  with_items:
-    - /opt/plex-web
     env:
-      TZ: "{{ tz }}"
-      PUID: "{{ uid }}"
-      PGID: "{{ gid }}"
+      PLEXWEB_URL: "plex-web.{{ user.domain }}"
       VIRTUAL_HOST: "plex-web.{{ user.domain }}"
-      VIRTUAL_PORT: "5000"
       LETSENCRYPT_HOST: "plex-web.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
-      UMASK_SET: "002"
+      VIRTUAL_PORT: "80"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
+    env_file: /opt/plex-web/env
     volumes:
-      - "/opt/plex-web"
+      - "/opt/plex-web/data:/data"
+      - "/mnt/unionfs/:/music:ro"
     labels:
       "com.github.cloudbox.cloudbox_managed": "true"
     networks:
